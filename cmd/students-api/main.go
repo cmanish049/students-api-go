@@ -12,6 +12,7 @@ import (
 
 	"github.com/cmanish049/students-api/internal/config"
 	"github.com/cmanish049/students-api/internal/http/handlers/student"
+	"github.com/cmanish049/students-api/internal/storage/sqlite"
 )
 
 func main() {
@@ -19,10 +20,18 @@ func main() {
 	cfg := config.MustLoad()
 
 	// setup database
+	db, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal("failed to connect to database:", err)
+	}
+
+	slog.Info("storage initialialized", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
+
+	defer db.Db.Close()
 	// setup router
 	router := http.NewServeMux()
 
-	router.HandleFunc("POST /api/students", student.New())
+	router.HandleFunc("POST /api/students", student.New(db))
 
 	// setup server
 	server := http.Server{
