@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"log/slog"
 	"net/http"
@@ -30,6 +31,11 @@ func main() {
 	defer db.Db.Close()
 	// setup router
 	router := http.NewServeMux()
+
+	router.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"status": "healthy"})
+	})
 
 	router.HandleFunc("POST /api/students", student.New(db))
 
