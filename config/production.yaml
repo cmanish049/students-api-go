@@ -1,4 +1,4 @@
 env: "production"
-storage_path: "storage/storage.db"
+storage_path: "storage/prd.db"
 http_server:
   address: "localhost:8082"
